@@ -3,9 +3,7 @@ const pool = require('../../modules/pool');
 const { rejectUnauthenticated } = require('../../modules/authentication-middleware');
 const router = express.Router();
 
-/**
- * GET route template
- */
+
 router.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         //checking if user is authenticated
@@ -57,11 +55,50 @@ router.get('/', (req, res) => {
     };//end authorization if/else
 });//end admin.organization.router.get
 
-/**
- * POST route template
- */
-router.post('/', (req, res) => {
+// router.post('/', (req, res) => {
+//     if (req.isAuthenticated()) {
+//         (async() => {
+//         //creates async function
+//             const client = await pool.connect();
+//             //await will wait for a return on the given functin and then do what follows
+//             try {
+//                 await client.query('BEGIN') // tells DB to be ready for multiple lines of queries
+//                 let queryText = ``
+                
+//             } catch (error) {
+//                 console.log('ROLLBACK', error);
+//                 await client.query('ROLLBACK');
+//                 //if error is presesnt this will revert all changes done since the 'BEGIN' query was sent 
+//                 throw error;
+//             } finally {
+//                 client.release();
+//                 //will end connection to database
+//             };//end  try/catch/finally
+//         })().catch((error) => {
+//             console.log('error in Catch: ', error);
+//             res.sendStatus(500)
+//         });//end async/await
+//     } else {
+//         res.sendStatus(403);
+//         //if user is not authenticated, will send unauthorized
+//     };//end authorization if/else
+// });//end admin.organization.router.post
 
+router.delete('/:id', (req, res) => {
+    console.log('req.params:', req.params);
+    if(req.isAuthenticated()) {
+        let queryText = `DELETE FROM organization WHERE organization.id = $1`;
+        pool.query(queryText, [req.params.id])
+        .then( () => {
+            res.sendStatus(201);
+        })
+        .catch( (error) => {
+            console.log('error in deleteAdminOrg', error);
+            res.sendStatus(500);
+        })
+    } else {
+        res.sendStatus(403);
+    }
 });
 
 module.exports = router;
