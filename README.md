@@ -39,7 +39,7 @@ Link to software that is required to install the app (e.g. node).
 - npm run client in terminal
 - npm run server in terminal
 
-
+DATABASE NAME: strudelhaus
 ```sql
 CREATE TABLE "person"
 (
